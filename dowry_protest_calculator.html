@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satirical Alimony Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            color: #374151;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        input, select {
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+        
+        .gradient-bar {
+            background: linear-gradient(to right, #dc2626, #f59e0b, #16a34a);
+            height: 30px;
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .marker {
+            position: absolute;
+            top: -10px;
+            width: 4px;
+            height: 50px;
+            background: #1f2937;
+            border-radius: 2px;
+            left: 0%;
+            transform: translateX(-50%);
+            transition: left 1s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .marker::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -4px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            border-radius: 50%;
+        }
+        
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        
+        .result-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 20px 0;
+        }
+        
+        .result-unit {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+        
+        .commentary {
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .commentary h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .disclaimer {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .disclaimer h4 {
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 10px;
+        }
+        
+        .disclaimer p {
+            color: #7f1d1d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .result-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Satirical Alimony Calculator</h1>
+            <p>Protesting Dowry Through Role Reversal</p>
+        </div>
+
+        <!-- Warning -->
+        <div class="warning">
+            <strong>Educational Note:</strong> Dowry is illegal under the Dowry Prohibition Act, 1961. 
+            This satirical tool highlights the absurdity of reducing human worth to financial transactions.
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 1.8rem;">Calculate Your "Market Value"</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" min="18" max="50" placeholder="Enter age (18-50)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="income">Monthly Income (₹)</label>
+                    <input type="number" id="income" min="0" max="500000" placeholder="Enter monthly income" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profession">Profession</label>
+                    <select id="profession" required>
+                        <option value="">Select profession</option>
+                        <option value="Engineer">Engineer</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Businessman">Businessman</option>
+                        <option value="IT Professional">IT Professional</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Lawyer">Lawyer</option>
+                        <option value="CA">Chartered Accountant</option>
+                        <option value="Government">Government Officer</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cityTier">City Tier</label>
+                    <select id="cityTier" required>
+                        <option value="">Select city tier</option>
+                        <option value="Tier1">Tier 1 (Mumbai, Delhi, Bangalore)</option>
+                        <option value="Tier2">Tier 2 (Pune, Ahmedabad, Hyderabad)</option>
+                        <option value="Tier3">Tier 3 (Other Cities)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="followers">Partner's Instagram Followers</label>
+                    <input type="number" id="followers" min="0" max="10000000" placeholder="Number of followers (0-10,000,000)" required>
+                </div>
+            </div>
+            
+            <button type="button" class="submit-btn" onclick="calculateAlimony()">
+                Calculate Satirical Alimony
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results">
+            <!-- Financial Burden -->
+            <div class="result-card">
+                <div class="result-title">Financial Burden Level</div>
+                <div class="gradient-bar">
+                    <div class="marker" id="burdenMarker"></div>
+                </div>
+                <div class="bar-labels">
+                    <span>Low Burden</span>
+                    <span>Moderate</span>
+                    <span>High Burden</span>
+                </div>
+                <div class="result-value">
+                    ₹<span id="alimonyAmount">0</span>
+                    <div class="result-unit">per month</div>
+                </div>
+            </div>
+
+            <!-- Survival Odds -->
+            <div class="result-card">
+                <div class="result-title">Relationship Survival Odds</div>
+                <div class="gradient-bar">
+                    <div class="marker" id="survivalMarker"></div>
+                </div>
+                <div class="bar-labels">
+                    <span>0% Chance</span>
+                    <span>50%</span>
+                    <span>100% Chance</span>
+                </div>
+                <div class="result-value">
+                    <span id="survivalPercent">0</span>%
+                    <div class="result-unit">survival probability</div>
+                </div>
+            </div>
+
+            <!-- Commentary -->
+            <div class="commentary">
+                <h3>Satirical Analysis</h3>
+                <p id="commentaryText"></p>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <h4>Important Disclaimer</h4>
+            <p>This is a satirical protest tool highlighting the absurdity of dowry practices. All calculations are fictional. Real alimony calculations require professional legal consultation.</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateAlimony() {
+            // Get form values
+            const age = parseInt(document.getElementById('age').value);
+            const income = parseInt(document.getElementById('income').value);
+            const profession = document.getElementById('profession').value;
+            const cityTier = document.getElementById('cityTier').value;
+            const followers = parseInt(document.getElementById('followers').value);
+
+            // Validate inputs
+            if (!age || !income || !profession || !cityTier || isNaN(followers)) {
+                alert('Please fill in all fields completely.');
+                return;
+            }
+
+            // Profession multipliers
+            const professionMultipliers = {
+                'Engineer': 1.2,
+                'Doctor': 1.4,
+                'Businessman': 1.5,
+                'IT Professional': 1.3,
+                'Teacher': 0.9,
+                'Lawyer': 1.35,
+                'CA': 1.25,
+                'Government': 1.1,
+                'Other': 1.0
+            };
+
+            // City multipliers
+            const cityMultipliers = {
+                'Tier1': 1.6,
+                'Tier2': 1.3,
+                'Tier3': 1.0
+            };
+
+            // Calculate satirical alimony
+            const baseAmount = (income * 0.18) + (age * 800) + (followers * 0.05);
+            const professionMultiplier = professionMultipliers[profession] || 1.0;
+            const cityMultiplier = cityMultipliers[cityTier] || 1.0;
+            
+            const finalAlimony = Math.round(baseAmount * professionMultiplier * cityMultiplier);
+
+            // Calculate survival odds
+            const stressLevel = finalAlimony / 1000;
+            const ageBonus = (age - 25) * 0.5;
+            let survivalOdds = Math.max(5, Math.min(95, 85 - (stressLevel * 0.8) + ageBonus));
+            survivalOdds = Math.round(survivalOdds);
+
+            // Update results
+            document.getElementById('alimonyAmount').textContent = finalAlimony.toLocaleString('en-IN');
+            document.getElementById('survivalPercent').textContent = survivalOdds;
+
+            // Position markers
+            const maxAlimony = 200000;
+            const burdenPercent = Math.min(100, (finalAlimony / maxAlimony) * 100);
+            
+            document.getElementById('burdenMarker').style.left = burdenPercent + '%';
+            document.getElementById('survivalMarker').style.left = survivalOdds + '%';
+
+            // Generate commentary
+            let commentary = "";
+            
+            if (finalAlimony > 120000) {
+                commentary = `At ₹${finalAlimony.toLocaleString('en-IN')} monthly, you've achieved "Premium Husband" status in this satirical marketplace. `;
+            } else if (finalAlimony > 60000) {
+                commentary = `With ₹${finalAlimony.toLocaleString('en-IN')} monthly alimony, you're in the "Standard Package" category. `;
+            } else {
+                commentary = `At ₹${finalAlimony.toLocaleString('en-IN')} per month, you're surprisingly affordable in this absurd calculation. `;
+            }
+            
+            if (survivalOdds < 25) {
+                commentary += `Your ${survivalOdds}% future problems probability suggests you might face significant challenges ahead! `;
+            } else if (survivalOdds < 50) {
+                commentary += `With ${survivalOdds}% future problems probability, you have moderate chances of facing difficulties. `;
+            } else {
+                commentary += `${survivalOdds}% future problems probability? That's quite high - prepare for potential challenges! `;
+            }
+            
+            if (followers > 100000) {
+                commentary += `Those ${followers.toLocaleString()} Instagram followers significantly inflated your 'cost'. `;
+            }
+            
+            commentary += "Remember: This ridiculous calculation mirrors the equally ridiculous practice of dowry, which reduces human relationships to crude financial transactions.";
+            
+            document.getElementById('commentaryText').textContent = commentary;
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateAlimony();
+            }
+        });
+    </script>
+</body>
+</html>
